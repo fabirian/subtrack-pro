@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    container_name: subtrack_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    volumes:
+      - ./backend/app:/app/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: subtrack_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: subtrack_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: subtrack_user
+      POSTGRES_PASSWORD: subtrack_pass
+      POSTGRES_DB: subtrack_db
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
